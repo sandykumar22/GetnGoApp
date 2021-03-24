@@ -4,16 +4,15 @@ import * as firebase from 'firebase'
 
 import Item from '../components/Item';
 import ModalScreen from './ModalScreen';
-import { Students } from './Students';
 import colors from '../config/colors';
 
 const AcceptedScreen = () => {
-	const [ data, setdata ] = useState(null);
+	//const [ data, setdata ] = useState(null);
 	const [ loading, setLoading ] = useState(true);
 	const [ modal, setmodal ] = useState(false);
 	const [ modaldata, setmodaldata ] = useState();
 	const [ refreshing, setRefreshing ] = useState(false)
-	const [ scrollRefresh, setScrollRefresh ] = useState(false)
+	//const [ scrollRefresh, setScrollRefresh ] = useState(false)
 	const [ users, setUsers ] = useState([])
 	const [ nonLocals, setNonLocals ] = useState([])
 	const [ local, setLocal ] = useState(false)
@@ -31,20 +30,6 @@ const AcceptedScreen = () => {
 		setmodal(false);
 		setmodaldata();
 	};
-
-	/*const getdata = async () => {
-		try {
-			const result = await Students;
-			setdata(result);
-			setloading(false);
-		} catch (err) {
-			Alert.alert('Error');
-		}
-	};
-
-	React.useEffect(() => {
-		getdata();
-	}, []);*/
 
 	useEffect(() => {
 		LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
@@ -64,8 +49,6 @@ const AcceptedScreen = () => {
 		let db;
 		const currentUser = firebase.auth().currentUser
 		const subscriber = firebase.firestore()
-		.collection("users")
-		.doc(currentUser.uid)
 		.collection("Local_outings")
 		.onSnapshot(querySnapshot => {
 			const users = [];
@@ -76,6 +59,10 @@ const AcceptedScreen = () => {
 				key: documentSnapshot.id,
 			  })
 			})
+			
+			const outings = users.filter(user => {
+				return user.userId === currentUser.uid
+			})
 	  
 			//setUsers(users);
 			db = firebase.database()
@@ -83,7 +70,7 @@ const AcceptedScreen = () => {
 			.on("value", (snapshot) => {
 				finalUserData = snapshot.val()
 				//console.log(finalUserData)
-				const finalData = users.map(user => {
+				const finalData = outings.map(user => {
 					user.branch = finalUserData.branch
 					user.email = finalUserData.email
 					user.fathername = finalUserData.fathername
@@ -121,8 +108,6 @@ const AcceptedScreen = () => {
 		let db;
 		const currentUser = firebase.auth().currentUser
 		const subscriber = firebase.firestore()
-		.collection("users")
-		.doc(currentUser.uid)
 		.collection("Non_Local_outings")
 		.onSnapshot(querySnapshot => {
 			const users = [];
@@ -133,6 +118,10 @@ const AcceptedScreen = () => {
 				key: documentSnapshot.id,
 			  })
 			})
+			
+			const outings = users.filter(user => {
+				return user.userId === currentUser.uid
+			})
 	  
 			//setUsers(users);
 			db = firebase.database()
@@ -140,7 +129,7 @@ const AcceptedScreen = () => {
 			.on("value", (snapshot) => {
 				finalUserData = snapshot.val()
 				//console.log(finalUserData)
-				const finalData = users.map(user => {
+				const finalData = outings.map(user => {
 					user.branch = finalUserData.branch
 					user.email = finalUserData.email
 					user.fathername = finalUserData.fathername
